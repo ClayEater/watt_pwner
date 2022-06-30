@@ -13,3 +13,13 @@
 3. Run `chmod 755 linux_install.sh` to give the bash script execute permissions
 4. Run the bash script (`./linux_install.sh`)
 5. Run watt_pwner by running `./luvit wattpwner.lua`
+
+### macOS
+
+It is theroetically supported. But fuck you:
+
+Download [Arch Linux](https://archlinux.org])
+
+Download [Ubuntu](https://ubuntu.com)
+
+Download [Linux Mint](https://linuxmint.com)
