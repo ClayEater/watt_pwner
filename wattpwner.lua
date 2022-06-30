@@ -311,9 +311,7 @@ elseif option == "2" then
 elseif option == "3" then
     local tokenfile = readfile("tokens.txt")
     local token = split(tokenfile,"\n")
-    local remove_invalid = GetInput("Remove invalid tokens (y/n)")
-    remove_invalid = remove_invalid:lower()
-    remove_invalid = remove_invalid == "y"
+    local remove_invalid = (GetInput("Remove invalid tokens (y/n)"):lower() == "y")
     print("Loaded "..#token.." tokens.")
     print("Starting verification\n")
     for i,thistoken in pairs(token) do
@@ -387,9 +385,7 @@ elseif option == "5" then
     local token = split(tokenfile,"\n")
     print("Loaded "..#token.." tokens.")
     local user = GetInput("User to follow")
-    local not_spam_exploit = GetInput("Follow notification exploit (y/n)")
-    not_spam_exploit = not_spam_exploit:lower()
-    not_spam_exploit = not_spam_exploit == "y"
+    local not_spam_exploit = ((GetInput("Follow notification exploit (y/n)"):lower()) == "y")
 
 
     function follow_user(i,v)
