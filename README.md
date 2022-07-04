@@ -17,6 +17,7 @@
 ### Manual Installation
 1. Install [Luvit](https://luvit.io)
 2. Install the following dependencies using `lit`
+
    • creationix/coro-http
    
    • luvit/json
