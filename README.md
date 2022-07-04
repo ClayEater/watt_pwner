@@ -18,7 +18,10 @@
 1. Install [Luvit](https://luvit.io)
 2. Install the following dependencies using `lit`
    • creationix/coro-http
+   
    • luvit/json
+   
    • luvit/secure-socket
+  
 3. Clone the watt_pwner repository into the folder where you installed luvit
 4. Run `wattpwner.lua` using `luvit`
