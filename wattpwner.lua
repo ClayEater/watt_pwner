@@ -79,7 +79,7 @@ function split(inputstr, sep)
     return t
 end
 function get_user_from_token(token)
-    local home_url = "https://www.wattpad.com/v5/home"
+    local home_url = "https://www.wattpad.com/settings/your-wattpad-data?json=1"
     local response = http_request(
         {
             Url = home_url,
@@ -91,12 +91,16 @@ function get_user_from_token(token)
             }
         }
     )
+    --[[
     local data = json.decode(response.Body)
     for i,v in pairs(data.sections) do
         if v.type == "greeting" then
             return v.data.greeting:sub(15,-2)
         end
     end
+    ]]
+    local data = json.decode(response.Body)
+    return data.username
 end
 function is_valid_token(token)
     local response
@@ -204,7 +208,8 @@ local options = {
     [2] = "Conversation Spammer",
     [3] = "Verify Tokens",
     [4] = "Report Bot",
-    [5] = "Follow Bot + Notification Exploit"
+    [5] = "Follow Bot + Notification Exploit",
+    [6] = "Userinvite Spammer"
 }
 function output_log(token,msg)
     print(maincolor.."["..string.sub(token,1,10).."...]"..default.." "..msg)
@@ -387,9 +392,9 @@ elseif option == "4" then
             }
         )
         if response.result.code == 200 then
-            print("Sent Report! Name used: "..id.Name.."\27[38;5;255m")
+            output_log(thistoken,"Sent Report! Name used: "..id.Name.."")
         else
-            print("\27[38;5;1mError: "..response.Body.."\27[38;5;255m")
+            output_log(thistoken,"Error: "..response.Body.."")
         end
     end
 elseif option == "5" then
@@ -431,6 +436,31 @@ elseif option == "5" then
     else
         for i,v in pairs(token) do
             follow_user(i,v)
+        end
+    end
+elseif option == "6" then
+    local tokenfile = readfile("tokens.txt")
+    local token = split(tokenfile,"\n")
+    print("Loaded "..#token.." tokens.")
+    local email = GetInput("Email to spam")
+    local amount = GetInput("Amount of invites to send")
+    for i = 1,tonumber(amount) do
+        local v = token[math.random(1,#token)]
+        local response = http_request(
+            {
+                Url = "https://www.wattpad.com/apiv2/userinvites",
+                Method = "POST",
+                Headers = {
+                    {"content-type","application/x-www-form-urlencoded; charset=UTF-8"},
+                    {"Cookie","wp_id=22700821-b1ca-4df7-b2ef-48a7ed608faf; fs__exp=4; lang=1; locale=en_US; ff=1; dpr=1; tz=-1; te_session_id=1652040028384; _ga_FNDTZ0MZDQ=GS1.1.1652119923.5.1.1652119960.0; _ga=GA1.1.40407520.1652040029; signupFrom=user_profile; OptanonConsent=isIABGlobal=false&datestamp=Mon+May+09+2022+19%3A12%3A39+GMT%2B0100+(British+Summer+Time)&version=6.10.0&hosts=&consentId=8d8b4b14-e875-4d96-a70a-0ae697964260&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0004%3A1%2CC0003%3A1%2CSTACK…_t0eY1P9_7__-0zjhfdt-8N3f_X_L8X42M7vF36pq4KuR4Eu3LBIQdlHOHcTUmw6okVrzPsbk2cr7NKJ7PEmnMbO2dYGH9_n93TuZKY7_____7z_v-v_v____f_7-3f3__5_3---_e_V_99zbn9_____9nP___9v-_9________4IsgEmGpeQBdiWODJtGkUKIEYVhIdQKACigGFoisIHVwU7K4CfUELABAKgIwIgQYgowYBAAIBAEhEQEgB4IBEARAIAAQAKgEIACNgEFgBYGAQACgGhYgRQBCBIQZEBEcpgQESJRQT2ViCUHexphCHWWAFAo_oqEBEoAQLAyEhYOY4AkBLhZIFmKF8gBGCAAA.f_gAD_gAAAAA; nextUrl=%2Fhome; isStaff=1; hc=1; token="..v}
+                },
+                Body = "emails="..urlencode(email).."&id=&content=&req_type=new"
+            }
+        )
+        if response.result.code == 200 then
+            output_log(v,"Sent invite")
+        else
+            output_log(v,"Error: "..response.Body)
         end
     end
 end
