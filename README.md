@@ -1,5 +1,5 @@
 # watt_pwner
-Multitool for Wattpad written in Lua
+Multitool for Wattpad written in the Lua scripting language.
 
 ![2022-07-05_04-15](https://user-images.githubusercontent.com/108309124/177242523-d66be79a-ee28-45e6-a92b-0e47f0c780bd.png)
 ## Installation
