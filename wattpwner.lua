@@ -1,6 +1,6 @@
 --[[
     watt_pwner: a wattpad multitool by oj simpson and an anonymous collaborator
-    version 0.3 beta
+    version 0.4 beta
 ]]
 print("\27[38;5;255m")
 -- Requires
