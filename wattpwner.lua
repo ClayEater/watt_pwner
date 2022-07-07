@@ -1,13 +1,13 @@
 --[[
     watt_pwner: a wattpad multitool by oj simpson and an anonymous collaborator
-    version 0.4 beta
+    version 0.5 beta
 ]]
 print("\27[38;5;255m")
 -- Requires
 local json = require("json")
 local http = require("coro-http")
 -- Constants
-local Version = "0.4-beta"
+local Version = "0.5-beta"
 local maincolor = "\27[38;5;129m"
 local default = "\27[38;5;255m"
 -- Functions
